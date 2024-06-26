@@ -2,7 +2,6 @@ package main
 
 import (
     "fmt"
-    //"bufio"
     "io"
     "io/ioutil"
     "log"
@@ -85,14 +84,7 @@ func startTCPServer() {
 
 func handleConn(conn *net.TCPConn) error {
     defer conn.Close()
-    //bufConn := bufio.NewReader(conn)
-
-    conn.SetNoDelay(true) //无延迟
-    //conn.SetKeepAlive(true)                      //保持激活
-    //conn.SetReadBuffer(64 * 1024)                //设置读缓冲区大小
-    //conn.SetWriteBuffer(64 * 1024)                   //设置写缓冲区大小
-    //conn.SetReadDeadline(time.Now().Add(30000000 * time.Second)) //设置读超时
-    //conn.SetReadTimeout(1e7)
+    conn.SetNoDelay(true)
 
     //Authentication negotiation
 
@@ -226,7 +218,7 @@ func handleConn(conn *net.TCPConn) error {
         defer remoteConn.Close()
 
         local := remoteConn.LocalAddr().(*net.TCPAddr)
-        bufLocalIP := local.IP.To4() //[]byte{192, 168, 0, 5}
+        bufLocalIP := local.IP.To4()
         localPort := local.Port;
         fmt.Printf("localAddr: %s:%d\n", local.IP, local.Port)
         
@@ -274,7 +266,6 @@ func handleConn(conn *net.TCPConn) error {
         //////////////////////////////////////////////
         
         errCh := make(chan error, 2)
-        //go ioCopy(remoteConn, bufConn, errCh)
         go ioCopy(remoteConn, conn, errCh)
         go ioCopy(conn, remoteConn, errCh)
         
@@ -331,7 +322,6 @@ func handleConn(conn *net.TCPConn) error {
 
 func write(data []byte, conn net.Conn) (n int, err error) {
     log.Println("Reply...", len(data))
-
     x := 0
     all := len(data)
 
@@ -356,7 +346,7 @@ func ioCopy(dst io.Writer, src io.Reader, errCh chan error) {
     }
     
     if err != nil {
-        fmt.Println("ioCopy:", err)
+        log.Println("ioCopy:", err)
     }
     errCh <- err
 }
