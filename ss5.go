@@ -97,11 +97,8 @@ func handleConn(conn *net.TCPConn) error {
                    
     buf := make([]byte, 2)
     n, err := conn.Read(buf)
-
-    e, ok := err.(net.Error)
-    if !(ok && e.Timeout()) && err != nil {
-        log.Println(n, err) //log.Fatal(err)
-        return err
+    if err != nil {
+        log.Fatal(err)
     }
 
     if buf[0] != 0x05 {
@@ -287,7 +284,7 @@ func handleConn(conn *net.TCPConn) error {
         buf = []byte{0}
         n, err = conn.Read(buf)
         if err != nil {
-            fmt.Println("err : ", err)
+            log.Println("err : ", err)
             return err
         }
         len := int(buf[0])
@@ -295,7 +292,7 @@ func handleConn(conn *net.TCPConn) error {
         bufFqdn := make([]byte, len)
         n, err = conn.Read(bufFqdn)
         if err != nil {
-            fmt.Println("err : ", err)
+            log.Println("err : ", err)
             return err
         }
         fqdn := string(bufFqdn)
