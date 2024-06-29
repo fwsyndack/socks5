@@ -338,9 +338,6 @@ func write(data []byte, conn net.Conn) (n int, err error) {
 
 func ioCopy(dst io.Writer, src io.Reader, errCh chan error) {
     _, err := io.Copy(dst, src)
-    if tcpConn, ok := dst.(*net.TCPConn); ok {
-        tcpConn.CloseWrite()
-    }
     
     if err != nil {
         log.Println("ioCopy:", err)
